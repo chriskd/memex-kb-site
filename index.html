@@ -182,7 +182,7 @@
 
         /* Hero */
         .hero {
-            padding-top: calc(64px + 4px);  /* Nav height + minimal gap */
+            padding-top: calc(64px + 16px);  /* Nav height + comfortable gap */
             padding-bottom: var(--space-2xl);
             min-height: auto;
             display: flex;
@@ -208,11 +208,11 @@
             text-transform: uppercase;
             letter-spacing: 0.1em;
             color: var(--accent);
-            margin-bottom: var(--space-xs);
+            margin-bottom: var(--space-md);
         }
 
         .hero h1 {
-            margin-bottom: var(--space-md);
+            margin-bottom: var(--space-xs);
             letter-spacing: -0.04em;
         }
 
@@ -612,8 +612,8 @@
         <div class="container">
             <div class="hero-grid">
                 <div class="hero-content">
-                    <div class="hero-tag">CLI-First Knowledge Base</div>
                     <h1>meme<span style="color: var(--accent);">x</span></h1>
+                    <div class="hero-tag">CLI-First Knowledge Base</div>
                     <p class="hero-tagline">
                         Hybrid search, typed relations, static publishing. 
                         Built for humans and AI agents.
