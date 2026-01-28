@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>memex — CLI-first knowledge base</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #fafaf9;
+            --color-surface: #ffffff;
+            --color-text: #1c1917;
+            --text-muted: #78716c;
+            --text-subtle: #a8a29e;
+            --accent: #0d9488;
+            --accent-light: #14b8a6;
+            --accent-dark: #0f766e;
+            --border: #e7e5e4;
+            --code-bg: #292524;
+            
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+            
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2.5rem;
+            --space-xl: 4rem;
+            --space-2xl: 6rem;
+            --space-3xl: 8rem;
+            
+            --content-width: 720px;
+            --grid-width: 1100px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--color-text);
+            background: var(--color-bg);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+        }
+
+        h1 {
+            font-size: clamp(3rem, 8vw, 5rem);
+            font-weight: 600;
+        }
+
+        h2 {
+            font-size: clamp(1.75rem, 4vw, 2.25rem);
+            margin-bottom: var(--space-md);
+        }
+
+        h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: var(--space-xs);
+        }
+
+        p {
+            color: var(--text-muted);
+            max-width: 65ch;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.875em;
+            background: var(--border);
+            padding: 0.125em 0.375em;
+            border-radius: 4px;
+            color: var(--color-text);
+        }
+
+        pre {
+            background: var(--code-bg);
+            border-radius: 8px;
+            padding: var(--space-md);
+            overflow-x: auto;
+            margin: var(--space-md) 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: #e7e5e4;
+        }
+
+        /* Layout */
+        .container {
+            max-width: var(--grid-width);
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+
+        .narrow {
+            max-width: var(--content-width);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(250, 250, 249, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            border-color: var(--border);
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            font-family: var(--font-mono);
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--color-text);
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-lg);
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-text);
+            text-decoration: none;
+        }
+
+        /* Hero */
+        .hero {
+            padding-top: calc(64px + var(--space-3xl));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+
+        @media (min-width: 900px) {
+            .hero-grid {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .hero-tag {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: var(--space-md);
+        }
+
+        .hero h1 {
+            margin-bottom: var(--space-md);
+            letter-spacing: -0.04em;
+        }
+
+        .hero-tagline {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 40ch;
+            margin-bottom: var(--space-xl);
+            line-height: 1.6;
+        }
+
+        .install-box {
+            background: var(--color-surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: var(--space-md) var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            max-width: fit-content;
+        }
+
+        .install-box code {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            background: none;
+            color: var(--color-text);
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: var(--space-xs);
+            color: var(--text-subtle);
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            color: var(--accent);
+        }
+
+        .hero-visual {
+            position: relative;
+            aspect-ratio: 4/3;
+            background: var(--color-surface);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .graph-preview {
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: var(--space-md);
+            padding: var(--space-lg);
+        }
+
+        .graph-node {
+            background: var(--color-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-mono);
+            font-size: 0.625rem;
+            color: var(--text-muted);
+        }
+
+        .graph-node:nth-child(1) { grid-column: 1; grid-row: 2; }
+        .graph-node:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .graph-node:nth-child(3) { grid-column: 2; grid-row: 3; }
+        .graph-node:nth-child(4) { grid-column: 3; grid-row: 2; border-color: var(--accent); color: var(--accent); }
+        .graph-node:nth-child(5) { grid-column: 4; grid-row: 1; }
+        .graph-node:nth-child(6) { grid-column: 4; grid-row: 3; }
+
+        /* Features */
+        .features {
+            background: var(--color-surface);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: var(--space-3xl) 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+
+        .section-header p {
+            margin: 0 auto;
+            font-size: 1.125rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .feature-card {
+            padding: var(--space-lg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--color-bg);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-md);
+        }
+
+        .feature-icon svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            color: var(--color-text);
+        }
+
+        .feature-card p {
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        .feature-meta {
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+        }
+
+        /* BRUTALIST SECTION - Everything below features */
+        .brutalist-section {
+            padding: var(--space-xl) 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .brutalist-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .brutalist-section h2 {
+            font-family: var(--font-mono);
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--color-text);
+            padding-bottom: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+
+        .brutalist-section h3 {
+            font-family: var(--font-mono);
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: var(--space-lg);
+            margin-bottom: var(--space-sm);
+            color: var(--color-text);
+        }
+
+        .brutalist-section p {
+            margin-bottom: var(--space-sm);
+            max-width: 65ch;
+        }
+
+        /* Tables - Brutalist style */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: var(--space-sm) 0 var(--space-md) 0;
+            font-size: 0.9375rem;
+            font-family: var(--font-sans);
+        }
+
+        th, td {
+            text-align: left;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--color-bg);
+            font-weight: 600;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        tr:nth-child(even) {
+            background: var(--color-bg);
+        }
+
+        td:first-child {
+            white-space: nowrap;
+            font-family: var(--font-mono);
+            font-weight: 500;
+        }
+
+        /* Install block - brutalist */
+        .install-block {
+            border: 1px solid var(--border);
+            margin: var(--space-md) 0;
+            background: var(--color-surface);
+        }
+
+        .install-block pre {
+            margin: 0;
+            border-radius: 0;
+            background: var(--code-bg);
+        }
+
+        .install-label {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--color-bg);
+            color: var(--text-muted);
+        }
+
+        /* Principles block */
+        .principles {
+            border: 1px solid var(--border);
+            margin: var(--space-md) 0;
+            background: var(--color-surface);
+        }
+
+        .principles-header {
+            background: var(--color-bg);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-family: var(--font-mono);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        .principles-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .principles-list li {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .principles-list li:last-child {
+            border-bottom: none;
+        }
+
+        .principles-list li::before {
+            content: "→ ";
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .principles-list strong {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        /* Links section */
+        .links-section {
+            padding: var(--space-lg) 0;
+        }
+
+        .links-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .links-list li {
+            margin: var(--space-xs) 0;
+            font-family: var(--font-mono);
+            font-size: 0.9375rem;
+        }
+
+        /* Footer */
+        footer {
+            padding: var(--space-md) 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.875rem;
+            color: var(--text-subtle);
+            margin: 0 auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding-top: calc(64px + var(--space-xl));
+                min-height: auto;
+                padding-bottom: var(--space-2xl);
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            th, td {
+                padding: 0.5rem;
+            }
+
+            td:first-child {
+                white-space: normal;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            nav {
+                display: none;
+            }
+
+            .hero {
+                padding-top: var(--space-xl);
+                min-height: auto;
+            }
+
+            .hero-visual {
+                display: none;
+            }
+
+            body {
+                font-size: 12pt;
+            }
+
+            .brutalist-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav id="nav">
+        <div class="container">
+            <div class="logo">meme<span>x</span></div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#commands">Commands</a></li>
+                <li><a href="#format">Format</a></li>
+                <li><a href="https://github.com/chriskd/memex-kb">GitHub</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section (Editorial) -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="hero-tag">CLI-First Knowledge Base</div>
+                    <h1>meme<span style="color: var(--accent);">x</span></h1>
+                    <p class="hero-tagline">
+                        Hybrid search, typed relations, static publishing. 
+                        Built for humans and AI agents.
+                    </p>
+                    <div class="install-box">
+                        <code>pip install memex-kb</code>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('pip install memex-kb')" aria-label="Copy">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="graph-preview">
+                        <div class="graph-node">kb/guide</div>
+                        <div class="graph-node">ref/api</div>
+                        <div class="graph-node">design</div>
+                        <div class="graph-node">kb/search</div>
+                        <div class="graph-node">patterns</div>
+                        <div class="graph-node">troubleshoot</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section (Editorial) -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>Designed for Clarity</h2>
+                <p>Everything you need to manage knowledge, nothing you don't.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </div>
+                    <h3>Hybrid Search</h3>
+                    <p>BM25 keyword search combined with semantic embeddings, merged with Reciprocal Rank Fusion.</p>
+                    <div class="feature-meta">keyword + vector + rrf</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                            <polyline points="16 6 12 2 8 6"></polyline>
+                            <line x1="12" y1="2" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h3>Typed Relations</h3>
+                    <p>Explicit directed links in frontmatter with CLI helpers and linting.</p>
+                    <div class="feature-meta">depends_on, implements, documents...</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="2"></circle>
+                            <circle cx="6" cy="6" r="2"></circle>
+                            <circle cx="18" cy="6" r="2"></circle>
+                            <circle cx="6" cy="18" r="2"></circle>
+                            <circle cx="18" cy="18" r="2"></circle>
+                            <path d="M12 10V6M12 14v4M10 12H6M14 12h4"></path>
+                        </svg>
+                    </div>
+                    <h3>Graph View</h3>
+                    <p>Wikilinks, relations, and semantic links queryable via CLI and published sites.</p>
+                    <div class="feature-meta">visualize connections</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                        </svg>
+                    </div>
+                    <h3>Dual Scopes</h3>
+                    <p>Project KB (./kb/) and user KB (~/.memex/kb/) with shared search.</p>
+                    <div class="feature-meta">@project + @user</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                    </div>
+                    <h3>Static Publishing</h3>
+                    <p>Generate HTML with embedded search, tag pages, and graph visualization.</p>
+                    <div class="feature-meta">mx publish -o _site</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3>Agent Integration</h3>
+                    <p>mx prime, mx schema, mx batch. Built for AI coding assistants.</p>
+                    <div class="feature-meta">claude, codex, openai</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BRUTALIST SECTIONS START HERE -->
+
+    <!-- Install Section (Brutalist) -->
+    <section class="brutalist-section" id="install">
+        <div class="container narrow">
+            <h2>Install</h2>
+            
+            <div class="install-block">
+                <div class="install-label">With uv (recommended)</div>
+                <pre><code>uv tool install memex-kb</code></pre>
+            </div>
+
+            <div class="install-block">
+                <div class="install-label">With pip</div>
+                <pre><code>pip install memex-kb</code></pre>
+            </div>
+
+            <p>Requires Python 3.11+. Semantic search included; first run downloads ~90MB embedding model.</p>
+        </div>
+    </section>
+
+    <!-- Quick Start (Brutalist) -->
+    <section class="brutalist-section" id="quickstart">
+        <div class="container narrow">
+            <h2>Quick Start</h2>
+            
+            <pre><code>mx init                           # Create kb/ directory
+mx add --title="API Notes" \     # Add an entry
+       --tags="api,docs" \       
+       --category=reference \    
+       --content="Endpoint details..."
+
+mx search "authentication"        # Hybrid search
+mx get reference/api-notes.md     # Read an entry</code></pre>
+        </div>
+    </section>
+
+    <!-- Commands (Brutalist Tables) -->
+    <section class="brutalist-section" id="commands">
+        <div class="container narrow">
+            <h2>Commands</h2>
+
+            <h3>Search & Browse</h3>
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>mx search &lt;query&gt;</code></td>
+                    <td>Hybrid search (BM25 + semantic)</td>
+                </tr>
+                <tr>
+                    <td><code>mx search --mode=semantic</code></td>
+                    <td>Semantic search only</td>
+                </tr>
+                <tr>
+                    <td><code>mx get &lt;path&gt;</code></td>
+                    <td>Read an entry</td>
+                </tr>
+                <tr>
+                    <td><code>mx list --tags=&lt;tag&gt;</code></td>
+                    <td>List entries by tag</td>
+                </tr>
+                <tr>
+                    <td><code>mx tree</code></td>
+                    <td>Directory structure</td>
+                </tr>
+                <tr>
+                    <td><code>mx whats-new</code></td>
+                    <td>Recent changes</td>
+                </tr>
+            </table>
+
+            <h3>Create & Edit</h3>
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>mx add</code></td>
+                    <td>Create new entry with metadata</td>
+                </tr>
+                <tr>
+                    <td><code>mx append</code></td>
+                    <td>Append to existing or create</td>
+                </tr>
+                <tr>
+                    <td><code>mx patch</code></td>
+                    <td>Find/replace in an entry</td>
+                </tr>
+                <tr>
+                    <td><code>mx ingest</code></td>
+                    <td>Import file into KB</td>
+                </tr>
+            </table>
+
+            <h3>Relations & Graph</h3>
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>mx relations &lt;path&gt;</code></td>
+                    <td>Query entry relations</td>
+                </tr>
+                <tr>
+                    <td><code>mx relations-add</code></td>
+                    <td>Add typed relation</td>
+                </tr>
+                <tr>
+                    <td><code>mx relations-lint</code></td>
+                    <td>Check relation consistency</td>
+                </tr>
+                <tr>
+                    <td><code>mx hubs</code></td>
+                    <td>Find high-connectivity entries</td>
+                </tr>
+                <tr>
+                    <td><code>mx suggest-links</code></td>
+                    <td>Semantic link suggestions</td>
+                </tr>
+            </table>
+
+            <h3>Maintenance</h3>
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>mx health</code></td>
+                    <td>Audit KB integrity</td>
+                </tr>
+                <tr>
+                    <td><code>mx reindex</code></td>
+                    <td>Rebuild search indices</td>
+                </tr>
+                <tr>
+                    <td><code>mx eval</code></td>
+                    <td>Search quality metrics</td>
+                </tr>
+                <tr>
+                    <td><code>mx publish</code></td>
+                    <td>Generate static site</td>
+                </tr>
+            </table>
+
+            <h3>Agent Tools</h3>
+            <table>
+                <tr>
+                    <th>Command</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td><code>mx prime</code></td>
+                    <td>Session context for agents</td>
+                </tr>
+                <tr>
+                    <td><code>mx schema --compact</code></td>
+                    <td>CLI schema (minimal tokens)</td>
+                </tr>
+                <tr>
+                    <td><code>mx batch</code></td>
+                    <td>Multiple commands, one invocation</td>
+                </tr>
+            </table>
+        </div>
+    </section>
+
+    <!-- Entry Format (Brutalist) -->
+    <section class="brutalist-section" id="format">
+        <div class="container narrow">
+            <h2>Entry Format</h2>
+            
+            <p>Entries are Markdown files with YAML frontmatter:</p>
+
+            <pre><code>---
+title: API Guide
+tags: [api, docs]
+description: Endpoints and auth
+relations:
+  - path: reference/auth.md
+    type: documents
+---
+
+# API Guide
+
+See [[reference/auth]] for auth details.</code></pre>
+
+            <p>Relation types: <code>depends_on</code>, <code>implements</code>, 
+            <code>extends</code>, <code>documents</code>, <code>references</code>, 
+            <code>blocks</code>, <code>related</code>.</p>
+        </div>
+    </section>
+
+    <!-- Philosophy (Brutalist) -->
+    <section class="brutalist-section" id="philosophy">
+        <div class="container narrow">
+            <h2>Philosophy</h2>
+
+            <div class="principles">
+                <div class="principles-header">Design Principles</div>
+                <ul class="principles-list">
+                    <li><strong>CLI-first:</strong> The command line is the primary interface. GUI is optional, CLI is mandatory.</li>
+                    <li><strong>Local-first:</strong> Your data stays on your machine. No cloud required, no network latency.</li>
+                    <li><strong>AI-friendly:</strong> Structured output, compact schemas, batch operations. Built for agents that read documentation.</li>
+                    <li><strong>Plain text:</strong> Markdown + YAML. No proprietary formats. Readable in any editor from now until forever.</li>
+                    <li><strong>Do one thing well:</strong> Knowledge management, not project management, not note-taking, not todo lists.</li>
+                    <li><strong>Substance over style:</strong> Fast, reliable, predictable. No surprises, no lock-in.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Links (Brutalist) -->
+    <section class="links-section" id="links">
+        <div class="container narrow">
+            <h2>Links</h2>
+            <ul class="links-list">
+                <li>Source: <a href="https://github.com/chriskd/memex-kb">github.com/chriskd/memex-kb</a></li>
+                <li>Docs: <code>mx --help</code></li>
+                <li>Issues: <a href="https://github.com/chriskd/memex-kb/issues">github.com/chriskd/memex-kb/issues</a></li>
+                <li>PyPI: <a href="https://pypi.org/project/memex-kb/">pypi.org/project/memex-kb</a></li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>memex-kb v0.2.1 — MIT License — Built for humans and AI agents</p>
+        </div>
+    </footer>
+
+    <script>
+        // Nav scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+
+</body>
+</html>
