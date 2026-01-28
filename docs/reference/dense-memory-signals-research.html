@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#fafaf9">
+    <title>Dense Memory Signals Research - Memex</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="/assets/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/lunr@2.3.9/lunr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>window.BASE_URL = "";</script>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <!-- Mobile menu button (hamburger) -->
+            <button class="mobile-menu-btn" aria-label="Open navigation menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <a href="/" class="logo">
+                <div class="logo-text">meme<span style="color: var(--accent);">x</span></div>
+            </a>
+
+            <div class="search-container">
+                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search knowledge base..."
+                    autocomplete="off"
+                >
+                <div id="search-results"></div>
+            </div>
+
+            <div class="header-nav">
+                <a href="/" class="nav-link active">Reader</a>
+                <a href="/graph.html" class="nav-link">Graph</a>
+            </div>
+
+            <!-- Mobile search button -->
+            <button class="mobile-search-btn" aria-label="Open search">
+                <svg width="20" height="20" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-tab="tree">Browse</button>
+                <button class="nav-tab" data-tab="recent">Recent</button>
+            </div>
+
+            <div class="sidebar-section" id="tree-section">
+                <div class="sidebar-header">Categories</div>
+                <div class="tree" id="tree">
+            <div class="tree-folder">
+                <div class="tree-folder-header">
+                    <span class="tree-icon folder">📁</span>
+                    <span class="tree-label">design</span>
+                </div>
+                <div class="tree-children">
+                    <a href="/design/chunking-system-design.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Chunking System Design</span>
+                    </a>
+                    <a href="/design/llm-query-processing-feature-plan.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">LLM Query Processing Feature Plan</span>
+                    </a>
+                    <a href="/design/relations-graph/frontmatter-edge-types.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Frontmatter Edge Types</span>
+                    </a>
+                    <a href="/design/relations-graph/relations-graph-overview.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Relations Graph Overview</span>
+                    </a>
+                    <a href="/design/relations-graph/wikilink-edge-behavior.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Wikilink Edge Behavior</span>
+                    </a>
+                    <a href="/design/state-diagrams.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">MX State Diagrams</span>
+                    </a>
+                </div>
+            </div>
+            <div class="tree-folder">
+                <div class="tree-folder-header">
+                    <span class="tree-icon folder">📁</span>
+                    <span class="tree-label">guides</span>
+                </div>
+                <div class="tree-children">
+                    <a href="/guides/ai-integration.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">AI Agent Integration</span>
+                    </a>
+                    <a href="/guides/installation.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Installation Guide</span>
+                    </a>
+                    <a href="/guides/mcp-setup.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">MCP Server Setup (Deprecated)</span>
+                    </a>
+                    <a href="/guides/quick-start.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Quick Start Guide</span>
+                    </a>
+                </div>
+            </div>
+            <div class="tree-folder">
+                <div class="tree-folder-header">
+                    <span class="tree-icon folder">📁</span>
+                    <span class="tree-label">reference</span>
+                </div>
+                <div class="tree-children">
+                    <a href="/reference/chat-gpt-5.2-pro-dense-memory-signals-reference.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">ChatGPT 5.2 Pro Dense Memory Signals Reference</span>
+                    </a>
+                    <a href="/reference/cli.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">CLI Reference</span>
+                    </a>
+                    <a href="/reference/dense-memory-signals-research.html" class="tree-item active">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Dense Memory Signals Research</span>
+                    </a>
+                    <a href="/reference/entry-format.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Entry Format Reference</span>
+                    </a>
+                    <a href="/reference/focusgroup-evaluation-2026-01.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Focusgroup Agent UX Evaluation (2026-01)</span>
+                    </a>
+                    <a href="/reference/focusgroup-evaluation-mx-cli-discoverability-2026-01.html" class="tree-item">
+                        <span class="tree-icon file">◇</span>
+                        <span class="tree-label">Focusgroup Evaluation: mx CLI Discoverability (2026-01)</span>
+                    </a>
+                </div>
+            </div></div>
+            </div>
+
+            <div class="sidebar-section" id="recent-section" style="display: none;">
+                <div class="sidebar-header">Recent Updates</div>
+                <div class="tree" id="recent-list">
+            <a href="/guides/ai-integration.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">AI Agent Integration</span>
+            </a>
+            <a href="/reference/cli.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">CLI Reference</span>
+            </a>
+            <a href="/reference/entry-format.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Entry Format Reference</span>
+            </a>
+            <a href="/design/relations-graph/relations-graph-overview.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Relations Graph Overview</span>
+            </a>
+            <a href="/guides/mcp-setup.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">MCP Server Setup (Deprecated)</span>
+            </a>
+            <a href="/reference/chat-gpt-5.2-pro-dense-memory-signals-reference.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">ChatGPT 5.2 Pro Dense Memory Signals Reference</span>
+            </a>
+            <a href="/design/state-diagrams.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">MX State Diagrams</span>
+            </a>
+            <a href="/design/relations-graph/frontmatter-edge-types.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Frontmatter Edge Types</span>
+            </a>
+            <a href="/design/relations-graph/wikilink-edge-behavior.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Wikilink Edge Behavior</span>
+            </a>
+            <a href="/design/chunking-system-design.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Chunking System Design</span>
+            </a>
+            <a href="/reference/focusgroup-evaluation-mx-cli-discoverability-2026-01.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Focusgroup Evaluation: mx CLI Discoverability (2026-01)</span>
+            </a>
+            <a href="/design/llm-query-processing-feature-plan.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">LLM Query Processing Feature Plan</span>
+            </a>
+            <a href="/reference/dense-memory-signals-research.html" class="tree-item active">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Dense Memory Signals Research</span>
+            </a>
+            <a href="/reference/focusgroup-evaluation-2026-01.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Focusgroup Agent UX Evaluation (2026-01)</span>
+            </a>
+            <a href="/guides/quick-start.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Quick Start Guide</span>
+            </a>
+            <a href="/guides/installation.html" class="tree-item">
+                <span class="tree-icon file">◇</span>
+                <span class="tree-label">Installation Guide</span>
+            </a></div>
+            </div>
+            <div class="sidebar-footer">
+                <a href="https://github.com/chriskd/memex-kb"
+                   target="_blank"
+                   rel="noopener">Powered by memex</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="main">
+            
+<div class="reader-container">
+    <article class="entry">
+        <header class="entry-header">
+            <a href="/reference/dense-memory-signals-research.html" class="entry-path">reference/dense-memory-signals-research</a>
+            <div class="entry-meta">
+                
+                <div class="entry-meta-item">
+                    Created: <span>Jan 13, 2026 at 5:42 PM</span>
+                </div>
+                
+                
+                <div class="entry-meta-item">
+                    Updated: <span>Jan 14, 2026 at 11:36 PM</span>
+                </div>
+                
+            </div>
+            
+            <div class="entry-tags">
+                
+                <a href="/tags/agent-memory.html" class="tag">agent-memory</a>
+                
+                <a href="/tags/research.html" class="tag">research</a>
+                
+                <a href="/tags/memory.html" class="tag">memory</a>
+                
+                <a href="/tags/signals.html" class="tag">signals</a>
+                
+            </div>
+            
+        </header>
+        <div class="entry-content">
+            <h1>Dense Memory Signals Research</h1>
+<p>Research into what contextual signals can be captured and injected to help agents maintain context across sessions. Goal: identify high-value, low-token signals.</p>
+<h2>What Existing Tools Capture</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Primary Signals</th>
+<th>Token Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>claude-mem</strong></td>
+<td>Tool observations, semantic summaries, session data</td>
+<td>50-1000 tokens (progressive)</td>
+</tr>
+<tr>
+<td><strong>basic-memory</strong></td>
+<td>Structured notes, relations, knowledge graph links</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>Mem0</strong></td>
+<td>Facts extracted from conversations (not transcripts)</td>
+<td>~90% reduction vs full context</td>
+</tr>
+<tr>
+<td><strong>Letta/MemGPT</strong></td>
+<td>Message buffer, core memory blocks, recall history, archival knowledge</td>
+<td>Variable</td>
+</tr>
+<tr>
+<td><strong>A-Mem</strong> (NeurIPS 2025)</td>
+<td>Atomic notes with keywords, tags, context, embeddings, links</td>
+<td>1,200-2,500 tokens vs 16,900 baseline</td>
+</tr>
+</tbody>
+</table>
+<h2>Signal Tiers</h2>
+<h3>Tier 1: High Value / Low Token Cost (The Gold)</h3>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Tokens</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decisions made + rationale</td>
+<td>~15</td>
+<td>Critical</td>
+<td>Claude can't infer this</td>
+</tr>
+<tr>
+<td>Gotchas/warnings discovered</td>
+<td>~10</td>
+<td>Critical</td>
+<td>&quot;X looks right but fails because Y&quot;</td>
+</tr>
+<tr>
+<td>What user corrected</td>
+<td>~10</td>
+<td>Critical</td>
+<td>Direct mistake prevention</td>
+</tr>
+<tr>
+<td>Files in staging (git)</td>
+<td>~5</td>
+<td>High</td>
+<td>Interrupted work signal</td>
+</tr>
+<tr>
+<td>Stash contents</td>
+<td>~5</td>
+<td>High</td>
+<td>Parked work context</td>
+</tr>
+<tr>
+<td>Branch name</td>
+<td>~3</td>
+<td>High</td>
+<td>Feature context in 3 tokens</td>
+</tr>
+<tr>
+<td>Build status</td>
+<td>~3</td>
+<td>High</td>
+<td>&quot;FAILING&quot; changes everything</td>
+</tr>
+<tr>
+<td>Files read but NOT modified</td>
+<td>~10</td>
+<td>High</td>
+<td>Research context</td>
+</tr>
+</tbody>
+</table>
+<h3>Tier 2: Medium Value / Medium Token Cost</h3>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Tokens</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Files touched (with context)</td>
+<td>~15</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Summary of what was done</td>
+<td>~25</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Questions Claude asked</td>
+<td>~15</td>
+<td>High</td>
+</tr>
+<tr>
+<td>Tool usage patterns</td>
+<td>~10</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>Errors encountered</td>
+<td>~15</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td>TODOs added/removed</td>
+<td>~10</td>
+<td>Medium</td>
+</tr>
+</tbody>
+</table>
+<h3>Tier 3: Novel/Non-Obvious Signals</h3>
+<table>
+<thead>
+<tr>
+<th>Signal</th>
+<th>Tokens</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Causal chains</td>
+<td>~30</td>
+<td>&quot;X led to Y which caused Z&quot;</td>
+</tr>
+<tr>
+<td>Semantic links</td>
+<td>~20</td>
+<td>Related memories by meaning</td>
+</tr>
+<tr>
+<td>User intent shifts</td>
+<td>~15</td>
+<td>&quot;Started on X, pivoted to Y&quot;</td>
+</tr>
+<tr>
+<td>Failed tool calls</td>
+<td>~10</td>
+<td>What approaches didn't work</td>
+</tr>
+<tr>
+<td>Search queries with no results</td>
+<td>~10</td>
+<td>Dead ends to avoid</td>
+</tr>
+</tbody>
+</table>
+<h2>Key Research Insights</h2>
+<ol>
+<li>
+<p><strong>Atomic &gt; Monolithic</strong>: A-Mem treats memories as single, self-contained units with rich metadata. This enables 85% token reduction.</p>
+</li>
+<li>
+<p><strong>Causality matters</strong>: claude-mem's innovation is that every observation includes what came before and after. The LLM sees causality, not snapshots.</p>
+</li>
+<li>
+<p><strong>Facts &gt; Transcripts</strong>: Mem0 extracts relevant facts, not full transcripts—reducing tokens ~90%.</p>
+</li>
+</ol>
+<h2>Scaling Strategies</h2>
+<p>As agents become more capable and touch more files, signal count explodes. Strategies:</p>
+<h3>1. Hierarchical Summarization</h3>
+<ul>
+<li>File-level → Directory-level → Project-level</li>
+<li>&quot;Modified 12 files in src/api/&quot; vs listing all 12</li>
+</ul>
+<h3>2. Recency Decay</h3>
+<ul>
+<li>Recent signals: full detail</li>
+<li>Older signals: compressed summaries</li>
+<li>Ancient signals: existence only (&quot;worked on caching 2 weeks ago&quot;)</li>
+</ul>
+<h3>3. Semantic Clustering</h3>
+<ul>
+<li>Group related files by purpose, not path</li>
+<li>&quot;Modified auth flow (5 files)&quot; vs listing each</li>
+</ul>
+<h3>4. Activity Thresholds</h3>
+<ul>
+<li>Below threshold: list all</li>
+<li>Above threshold: summarize + highlight outliers</li>
+<li>&quot;Touched 47 files, notably: new cache.ts, heavily modified api.ts&quot;</li>
+</ul>
+<h3>5. Delta-Only for Repeats</h3>
+<ul>
+<li>First session: full context</li>
+<li>Subsequent: only what changed since last injection</li>
+</ul>
+<h3>6. User-Guided Salience</h3>
+<ul>
+<li>Let user mark signals as important/irrelevant</li>
+<li>Learn what matters per-project</li>
+</ul>
+<h2>Proposed Dense Injection Format</h2>
+<pre><code>[Session: 2d ago | Branch: feat/caching | Build: PASSING]
+
+RESUMED: Implementing Redis cache layer
+TOUCHED: cache.ts(added), api.ts(modified), redis.ts(read-only)
+STAGED: cache.ts (incomplete - needs TTL logic)
+
+DECISIONS:
+- Chose Redis over Memcached (team familiarity)
+
+GOTCHAS:
+- redis.ts exports are CJS not ESM
+
+CORRECTIONS:
+- User: &quot;Use connection pooling, not single client&quot;
+</code></pre>
+<p>Estimated: ~120 tokens with very high information density.</p>
+<h2>Sources</h2>
+<ul>
+<li><a href="../https:/github.com/thedotmack/claude-mem.html" class="wikilink">claude-mem GitHub</a></li>
+<li><a href="../https:/docs.basicmemory.com.html" class="wikilink">basic-memory Docs</a></li>
+<li><a href="../https:/github.com/mem0ai/mem0.html" class="wikilink">Mem0 GitHub</a></li>
+<li><a href="../https:/www.letta.com/blog/agent-memory.html" class="wikilink">Letta Agent Memory</a></li>
+<li><a href="../https:/arxiv.org/abs/2502.12110.html" class="wikilink">A-Mem Paper (NeurIPS 2025)</a></li>
+<li><a href="../https:/alok-mishra.com/2026/01/07/a-2026-memory-stack-for-enterprise-agents.html" class="wikilink">2026 Enterprise Memory Stack</a></li>
+</ul>
+
+        </div>
+    </article>
+</div>
+        </main>
+
+        <!-- Right panel -->
+        <aside class="panel">
+            
+        <div class="panel-section">
+            <div class="panel-header">Outgoing Links</div>
+            <ul class="link-list">
+                <li class="link-item">
+                    <a href="/https://alok-mishra.com/2026/01/07/a-2026-memory-stack-for-enterprise-agents.html">
+                        <div class="link-title">a-2026-memory-stack-for-enterprise-agents</div>
+                        <div class="link-path">https://alok-mishra.com/2026/01/07/a-2026-memory-stack-for-enterprise-agents</div>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="/https://arxiv.org/abs/2502.12110.html">
+                        <div class="link-title">2502.12110</div>
+                        <div class="link-path">https://arxiv.org/abs/2502.12110</div>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="/https://docs.basicmemory.com.html">
+                        <div class="link-title">docs.basicmemory.com</div>
+                        <div class="link-path">https://docs.basicmemory.com</div>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="/https://github.com/mem0ai/mem0.html">
+                        <div class="link-title">mem0</div>
+                        <div class="link-path">https://github.com/mem0ai/mem0</div>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="/https://github.com/thedotmack/claude-mem.html">
+                        <div class="link-title">claude-mem</div>
+                        <div class="link-path">https://github.com/thedotmack/claude-mem</div>
+                    </a>
+                </li>
+                <li class="link-item">
+                    <a href="/https://www.letta.com/blog/agent-memory.html">
+                        <div class="link-title">agent-memory</div>
+                        <div class="link-path">https://www.letta.com/blog/agent-memory</div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="panel-section">
+            <div class="panel-header">Backlinks</div>
+            <ul class="link-list"><li class="empty-state">No backlinks</li>
+            </ul>
+        </div>
+        <div class="panel-section">
+            <div class="panel-header">Typed Relations</div><p class="empty-state">No typed relations</p>
+        </div>
+        </aside>
+    </div>
+
+    <!-- Mobile search overlay -->
+    <div class="search-overlay">
+        <div class="search-overlay-header">
+            <button class="search-overlay-close" aria-label="Close search">
+                <svg width="24" height="24" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 6L6 18"></path>
+                    <path d="M6 6l12 12"></path>
+                </svg>
+            </button>
+            <input
+                type="text"
+                class="search-overlay-input"
+                placeholder="Search..."
+                autocomplete="off"
+            >
+        </div>
+        <div class="search-overlay-results"></div>
+    </div>
+
+    <!-- Bottom navigation (mobile) -->
+    <nav class="bottom-nav">
+        <div class="bottom-nav-inner">
+            <a href="/" class="bottom-nav-link active">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                </svg>
+                <span>Reader</span>
+            </a>
+            <button class="bottom-nav-link bottom-nav-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <span>Search</span>
+            </button>
+            <a href="/graph.html" class="bottom-nav-link">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <circle cx="6" cy="6" r="2"></circle>
+                    <circle cx="18" cy="6" r="2"></circle>
+                    <circle cx="6" cy="18" r="2"></circle>
+                    <circle cx="18" cy="18" r="2"></circle>
+                    <path d="M12 10V6M12 14v4M10 12H6M14 12h4"></path>
+                </svg>
+                <span>Graph</span>
+            </a>
+        </div>
+    </nav>
+
+    <script src="/assets/search.js"></script>
+    <script src="/assets/sidebar.js"></script>
+    <script>hljs.highlightAll(); mermaid.initialize({startOnLoad: true, theme: 'dark'});</script>
+</body>
+</html>
