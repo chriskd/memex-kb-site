@@ -616,12 +616,12 @@
                     <h1>meme<span style="color: var(--accent);">x</span></h1>
                     <div class="hero-tag">CLI-First Knowledge Base</div>
                     <p class="hero-tagline">
-                        Hybrid search, typed relations, static publishing. 
+                        Hybrid search, typed relations, static publishing.
                         Built for humans and AI agents.
                     </p>
                     <div class="install-box">
-                        <code>pip install memex-kb</code>
-                        <button class="copy-btn" onclick="navigator.clipboard.writeText('pip install memex-kb')" aria-label="Copy">
+                        <code>uv tool install memex-kb</code>
+                        <button class="copy-btn" onclick="navigator.clipboard.writeText('uv tool install memex-kb')" aria-label="Copy">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
@@ -728,8 +728,8 @@
                         </svg>
                     </div>
                     <h3>Agent Integration</h3>
-                    <p>mx prime, mx schema, mx batch. Built for AI coding assistants.</p>
-                    <div class="feature-meta">claude, codex, openai</div>
+                    <p>Portable CLI workflows plus a bundled <code>SKILL.md</code> for Claude Code, Codex, and other shell-capable harnesses.</p>
+                    <div class="feature-meta">mx + skills/memex-kb</div>
                 </div>
             </div>
         </div>
@@ -744,15 +744,17 @@
             
             <div class="install-block">
                 <div class="install-label">With uv (recommended)</div>
-                <pre><code>uv tool install memex-kb</code></pre>
+                <pre><code>uv tool install memex-kb
+uv tool install 'memex-kb[search]'  # Optional semantic search</code></pre>
             </div>
 
             <div class="install-block">
                 <div class="install-label">With pip</div>
-                <pre><code>pip install memex-kb</code></pre>
+                <pre><code>pip install memex-kb
+pip install 'memex-kb[search]'      # Optional semantic search</code></pre>
             </div>
 
-            <p>Requires Python 3.11+. Semantic search included; first run downloads ~90MB embedding model.</p>
+            <p>Requires Python 3.11+. Keyword search is available by default. Install the <code>[search]</code> extra for semantic search, embeddings, and semantic link suggestions.</p>
         </div>
     </section>
 
@@ -767,7 +769,7 @@ mx add --title="API Notes" \     # Add an entry
        --category=reference \    
        --content="Endpoint details..."
 
-mx search "authentication"        # Hybrid search
+mx search "authentication"        # Search the KB
 mx get reference/api-notes.md     # Read an entry</code></pre>
         </div>
     </section>
@@ -785,11 +787,11 @@ mx get reference/api-notes.md     # Read an entry</code></pre>
                 </tr>
                 <tr>
                     <td><code>mx search &lt;query&gt;</code></td>
-                    <td>Hybrid search (BM25 + semantic)</td>
+                    <td>Keyword search by default</td>
                 </tr>
                 <tr>
                     <td><code>mx search --mode=semantic</code></td>
-                    <td>Semantic search only</td>
+                    <td>Semantic search (requires <code>[search]</code>)</td>
                 </tr>
                 <tr>
                     <td><code>mx get &lt;path&gt;</code></td>
@@ -877,7 +879,7 @@ mx get reference/api-notes.md     # Read an entry</code></pre>
                 </tr>
                 <tr>
                     <td><code>mx eval</code></td>
-                    <td>Search quality metrics</td>
+                    <td>Search quality metrics (<code>--dataset</code> required)</td>
                 </tr>
                 <tr>
                     <td><code>mx publish</code></td>
@@ -958,7 +960,7 @@ See [[reference/auth]] for auth details.</code></pre>
             <h2>Links</h2>
             <ul class="links-list">
                 <li>Source: <a href="https://github.com/chriskd/memex-kb">github.com/chriskd/memex-kb</a></li>
-                <li>Docs: <code>mx --help</code></li>
+                <li>Docs: <a href="https://docs.memex-kb.sh/">docs.memex-kb.sh</a></li>
                 <li>Issues: <a href="https://github.com/chriskd/memex-kb/issues">github.com/chriskd/memex-kb/issues</a></li>
                 <li>PyPI: <a href="https://pypi.org/project/memex-kb/">pypi.org/project/memex-kb</a></li>
             </ul>
@@ -968,7 +970,7 @@ See [[reference/auth]] for auth details.</code></pre>
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>memex-kb v0.2.1 — MIT License — Built for humans and AI agents</p>
+            <p>memex-kb v0.3.2 — MIT License — Built for humans and AI agents</p>
         </div>
     </footer>
 

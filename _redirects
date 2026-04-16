@@ -1,0 +1,3 @@
+/docs https://docs.memex-kb.sh/ 301
+/docs/ https://docs.memex-kb.sh/ 301
+/docs/* https://docs.memex-kb.sh/:splat 301
